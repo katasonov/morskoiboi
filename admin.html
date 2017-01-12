@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Администрирование сервера игры Морской Бой</title>
+
+	<script type="text/javascript">
+
+var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}	
+
+      function handleAddMessage()
+      {
+
+
+
+        //alert(encodeURIComponent(Base64.encode(document.AddMessageForm.clientUid.value)));
+        //return false;
+        var messageType = document.AddMessageForm.messageType[document.AddMessageForm.messageType.selectedIndex].value;
+        var clientUid = document.AddMessageForm.clientUid.value
+        var language = document.AddMessageForm.language.value
+        /*
+        var title = Base64.encode(document.AddMessageForm.title.value)
+        var text = Base64.encode(document.AddMessageForm.text.value)
+		*/
+        var title = encodeURIComponent(document.AddMessageForm.title.value)
+        var text = encodeURIComponent(document.AddMessageForm.text.value)
+        window.location = '/message/add?clientUid=' + clientUid + '&language=' + language + '&title=' + title + '&message=' + text + '&type=' + messageType;
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }
+
+    function handleDeleteMessage()
+      {
+
+
+
+        //alert(Base64.encode(document.AddMessageForm.clientUid.value));
+        var messageUid = document.DeleteMessageForm.messageUid.value
+
+        window.location = '/message/delete?id=' + messageUid;
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }      
+
+      function handleAddShots()
+      {
+
+
+
+        //alert(Base64.encode(document.AddMessageForm.clientUid.value));
+        var clientUid = document.AddShotsForm.clientUid.value
+        var shots = document.AddShotsForm.shots.value
+
+        window.location = '/player/addShots?clientUid=' + clientUid + '&shots=' + shots;
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }  
+
+   	 function handleChangePassword()
+      {
+
+
+
+        //alert(Base64.encode(document.AddMessageForm.clientUid.value));
+        var password = document.ChangePasswordForm.password.value
+
+        window.location = '/changepassword?newPassword=' + password;
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }            
+
+      function handleStartIntervalStat()
+      {
+		var title = encodeURIComponent(document.StartIntervalStatForm.title.value)
+		var language = encodeURIComponent(document.StartIntervalStatForm.statLanguage.value)
+        window.location = '/startintervalstat?title=' + title + '&language=' + language;
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }
+
+      function handleStopIntervalStat()
+      {
+        window.location = '/stopintervalstat';
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }
+
+      function handleStopShareOfAudioBackground()
+      {
+        window.location = '/stopaudioshare';
+
+        //event.preventDefault(); // disable normal form submit behavior
+        return false; // prevent further bubbling of event
+      }
+
+	</script>
+</head>
+<body>
+
+
+<a href="/player/list.csv">Скачать базу игроков</a>
+<a href="/message/list.csv" style="padding-left:16px;">Скачать базу сообщений</a>
+
+<br><br>
+
+
+<form name="AddMessageForm" onSubmit="return handleAddMessage()" style="width:350px;border: 1px solid grey;">      
+Добавить новое сообщение
+	<table>
+		<tr>
+			<td>
+				Title:
+			</td>
+			<td>
+				<input name="title" type="text">
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				Text:
+			</td>
+			<td>
+				<!--<input name="text" type="text">-->
+				<textarea name="text" rows=10 cols=35>
+				
+				</textarea>				
+
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				Type:
+			</td>
+			<td>
+				<select size="1" name="messageType">
+				  <option value='0' selected="selected">Обычное</option>
+				  <option value='1'>Горячее</option>
+				  <option value='2'>Push</option>
+				</select>				
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				ClientUid:
+			</td>
+			<td>
+				<input name="clientUid" type="text">
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				Language:
+			</td>
+			<td>
+				<input name="language" type="text">
+			</td>
+
+		</tr>
+
+	</table>
+      
+      <input name="Submit"  type="submit" value="Добавить" />
+</form>
+<br/> <br/>
+
+
+<form name="DeleteMessageForm" onSubmit="return handleDeleteMessage()" style="width:350px;border: 1px solid grey;">      
+Удалить сообщение
+	<table>
+		<tr>
+			<td>
+				MessageUid:
+			</td>
+			<td>
+				<input name="messageUid" type="text">
+			</td>
+
+		</tr>
+
+
+	</table>
+      
+      <input name="Submit"  type="submit" value="Удалить" />
+</form>
+<br/> <br/>
+
+
+<form name="AddShotsForm" onSubmit="return handleAddShots()" style="width:350px;border: 1px solid grey;">      
+Добавить кол-во выстрелов для игрока
+	<table>
+		<tr>
+			<td>
+				ClientUid:
+			</td>
+			<td>
+				<input name="clientUid" type="text">
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				Shots:
+			</td>
+			<td>
+				<input name="shots" type="text">
+			</td>
+
+		</tr>
+
+	</table>
+      
+      <input name="Submit"  type="submit" value="Добавить" />
+</form>
+
+<br/><br/>
+{% if NeedStartIntervalStat %}
+<form name="StartIntervalStatForm" onSubmit="return handleStartIntervalStat()" style="width:350px;border: 1px solid grey;">      
+Интервальная статистика:
+	<table>
+		<tr>
+			<td>
+				Заголовок:
+			</td>
+			<td>
+				<input name="title" type="text">
+			</td>
+
+		</tr>
+		<tr>
+			<td>
+				Язык:
+			</td>
+			<td>
+				<select size="1" name="statLanguage">
+				  <option value='0' selected="selected">rus</option>
+				  <option value='1'>eng</option>
+				</select>				
+			</td>
+
+		</tr>
+	</table>
+      
+	<table>
+		<tr>
+			<td>
+				<input name="Submit"  type="submit" value="Старт" /> 
+			</td>
+		</tr>
+	</table>
+      
+</form>
+{% else %}
+<form name="StopIntervalStatForm" onSubmit="return handleStopIntervalStat()" style="width:350px;border: 1px solid grey;">      
+Интервальная статистика:
+	<table>
+		<tr>
+			<td>
+				{{ IntervalStatTitle }}
+			</td>
+		</tr>
+	</table>
+      
+	<table>
+		<tr>
+			<td>
+				<input name="Submit"  type="submit" value="Стоп" /> 
+			</td>
+		</tr>
+	</table>
+      
+</form>
+{% endif %}
+
+<br/><br/>
+
+{% if NeedAudioUpload %}
+
+<form action="{{ UploadAudioUrl }}" method="POST" enctype="multipart/form-data" style="width:350px;border: 1px solid grey;">
+
+	<table>
+		<tr>
+			<td>
+				Звуковой файл:
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="file" name="file"><br>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input name="submit"  type="submit" value="Добавить" /> 
+			</td>
+		</tr>
+	</table>
+
+ </form>
+
+{% else %}
+
+<form name="StopShareOfAudioBackground" onSubmit="return handleStopShareOfAudioBackground()" style="width:350px;border: 1px solid grey;">      
+Аудио Фон:
+      
+	<table>
+		<tr>
+			<td>
+				<input name="Submit"  type="submit" value="Стоп" /> 
+			</td>
+		</tr>
+	</table>
+      
+</form>
+
+{% endif %}
+
+<br><br>
+
+<form name="ChangePasswordForm" onSubmit="return handleChangePassword()" style="width:350px;border: 1px solid grey;">      
+Установить новый пароль:
+	<table>
+		<tr>
+			<td>
+				Пароль:
+			</td>
+			<td>
+				<input name="password" type="text">
+			</td>
+
+		</tr>
+	</table>
+      
+	<table>
+		<tr>
+			<td>
+				<input name="Submit"  type="submit" value="Установить" /> 
+			</td>
+			<td style="padding-left:14px;">
+				<a href="/sendpassword">Прислать пароль</a>
+			</td>
+
+		</tr>
+	</table>
+      
+</form>
+
+
+</body>
+</html>

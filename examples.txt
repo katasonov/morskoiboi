@@ -1,0 +1,5 @@
+localhost:8080/player/add?nickname="QWxleA=="&appVersion=1&osType=iOS&osVersion=8.1&playService="R2FtZSBDZW50ZXI="&shots=10
+localhost:8080/player/get?playerUid=""
+
+localhost:8080/player/update?clientUid=8UVUiD73Sh8CWzk4&shots=10
+

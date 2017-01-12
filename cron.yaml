@@ -1,0 +1,4 @@
+cron:
+- description: Adjust shots number
+  url: /cron/AdjustShotsNumber
+  schedule: every 1 hours

@@ -1,0 +1,28 @@
+application: nevskybs
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /favicon.ico
+  static_files: assets/favicon.ico
+  upload: assets/favicon.ico
+- url: /GameServer.doc
+  static_files: assets/GameServer.doc
+  upload: assets/GameServer.doc
+- url: /update_schema.+
+  script: update_schema_handler.app  # path to webapp2 application definition.
+- url: /.*
+  script: main.application
+
+
+builtins:
+- deferred: on
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
+

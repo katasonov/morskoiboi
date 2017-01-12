@@ -1,0 +1,1 @@
+curl --header "Authorization: key=AIzaSyAx7mw84u8Vpp6lfvM4dIoKe20QdpnlLyA" --header Content-Type:"application/json" https://gcm-http.googleapis.com/gcm/send -d "{\"registration_ids\":[\"APA91bGSQrfLauxNdlE1Cy4ppnuYe0mh5-UCOQEn_DT-V-FQ3y7_qMG3gU4C794NgzErQ5bVLi7HPqpF6indhG5TgWxom4Gdu5XVSrzoNQ888gWP0RJNBb27BHE8IVeJmtSpjljd96cb\"]}"
