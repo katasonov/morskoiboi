@@ -73,7 +73,7 @@ def ClearPlayerTempStatValues(cursor=None, num_updated=0):
         logging.debug(
             'Put %d entities to Datastore for a total of %d',
             len(to_put), num_updated)
-   if more == True:    
+    if more == True:
         deferred.defer(
             ClearPlayerTempStatValues, cursor=next_curs, num_updated=num_updated)
     else:
