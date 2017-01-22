@@ -1,8 +1,11 @@
 import logging
+import models
 from models import PlayerRecord
+from models import MessageRecord
 
 from google.appengine.ext import deferred
 from google.appengine.ext import ndb
+from pushnot import PushNotificationBatchSender
 
 BATCH_SIZE = 100  # ideal batch size may vary based on entity size.
 
@@ -17,7 +20,7 @@ def AdjustShotsNumberFunc(cursor=None, num_updated=0):
         # manipulate property values, it might go something like this:
         if p.shots < 120:
             p.shots = 120
-            to_put.append(p)    
+            to_put.append(p)
 
     if to_put:
         ndb.put_multi(to_put)
@@ -25,11 +28,27 @@ def AdjustShotsNumberFunc(cursor=None, num_updated=0):
         logging.debug(
             'Put %d entities to Datastore for a total of %d',
             len(to_put), num_updated)
-        deferred.defer(
+
+    messages = MessageRecord.query(MessageRecord.language == 'rus',
+        MessageRecord.messageType == '100').fetch(1)
+
+    for m in messages:
+        PushNotificationBatchSender(m.title, m.message, 'rus').do(players)
+
+    messages = MessageRecord.query(MessageRecord.language == 'eng',
+        MessageRecord.messageType == '100').fetch(1)
+
+    for m in messages:
+        PushNotificationBatchSender(m.title, m.message, 'eng').do(players)
+    #PushNotificationBatchSender(title, message, language).do(players)
+
+    if more == True:
+            deferred.defer(
             AdjustShotsNumberFunc, cursor=next_curs, num_updated=num_updated)
     else:
         logging.debug(
             'Shots number adjusted for %d players!', num_updated)
+
 
 def ClearPlayerTempStatValues(cursor=None, num_updated=0):
     players, next_curs, more = PlayerRecord.query().fetch_page(\
@@ -54,6 +73,7 @@ def ClearPlayerTempStatValues(cursor=None, num_updated=0):
         logging.debug(
             'Put %d entities to Datastore for a total of %d',
             len(to_put), num_updated)
+   if more == True:    
         deferred.defer(
             ClearPlayerTempStatValues, cursor=next_curs, num_updated=num_updated)
     else:

@@ -49,8 +49,7 @@ import csv
 
 import cron_jobs
 
-
-SERVER_API_KEY = 'AIzaSyAx7mw84u8Vpp6lfvM4dIoKe20QdpnlLyA'
+from pushnot import PushNotificationBatchSender
 
 class JSONEncoder(json.JSONEncoder):
 
@@ -117,7 +116,7 @@ class PlayerAdd(webapp2.RequestHandler):
 					osVersion=osVersion,
 					pushNotificationUid=pushNotificationUid,
 					playService=playService,
-					shots=shots,
+					shots=120,
 					clientUid=clientUid,
 					language=language)
 				player.put()
@@ -311,41 +310,6 @@ class PlayerAddShots(webapp2.RequestHandler):
 		self.response.out.write(json.dumps(ret))
 		return
 
-
-class PushNotificationBatchSender(models.IPlayersProcessor):
-
-	def __init__(self, title, message):
-		self.title = title
-		self.message = message
-
-	def do(self, players):
-		if len(players) < 1:
-				return
-		logging.info("PushNotificationBatchSender:do:")
-		logging.info("for " + str(len(players)) + " players")
-		regIds=[]
-		for p in players:
-			if p.pushNotificationUid is not None and len(p.pushNotificationUid):
-				pass
-			regIds = regIds + [p.pushNotificationUid]
-		url = "https://android.googleapis.com/gcm/send"
-		headers = { 'Content-Type' : 'application/json', 
-			'Authorization': 'key=' + SERVER_API_KEY }
-
-		values = { 'registration_ids': regIds, 
-			'data': {'title': self.title, 'message': self.message} }
-
-
-		data = urllib.urlencode(values)
-		logging.info('requesting push:')
-		req = urllib2.Request(url, json.dumps(values), headers)
-		response = urllib2.urlopen(req)
-		the_page = response.read()
-		#self.response.out.write(the_page)
-		logging.info('push response: '+ the_page)
-
-	
-
 class MessageAdd(webapp2.RequestHandler):
 	
 	def get(self):
@@ -385,14 +349,14 @@ class MessageAdd(webapp2.RequestHandler):
 
 			if clientUid == '':
 				#making Push requests for all players
-				models.DoForAllPlayers(PushNotificationBatchSender(title, message))
+				models.DoForAllPlayers(PushNotificationBatchSender(title, message, language))
 			else:
 				nkey = ndb.Key(PlayerRecord, clientUid)
 				player = nkey.get()
 				if not player:
 					ret['error'] = gErrors[3]			
 					raise 1
-				PushNotificationBatchSender(title, message).do([player])
+				PushNotificationBatchSender(title, message, language).do([player])
 
 			
 		ret['error'] = gErrors[0]
